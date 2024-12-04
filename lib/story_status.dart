@@ -65,33 +65,26 @@ class StoryStatus extends StatefulWidget {
 class _StoryStatusState extends State<StoryStatus> {
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Transform.rotate(
-          angle: widget.numberOfStatus == 4 ? (pi / 4) : 0,
-          child: SizedBox(
-            width: widget.radius * 2,
-            height: widget.radius * 2,
-            child: CustomPaint(
-              painter: Arc(
-                alreadyWatch: widget.indexOfSeenStatus,
-                numberOfArc: widget.numberOfStatus,
-                spacing: widget.spacing,
-                strokeWidth: widget.strokeWidth,
-                seenProperties: widget.seenProperties,
-                unseenProperties: widget.unseenProperties,
-              ),
-            ),
-          ),
+    return SizedBox(
+      width: widget.radius * 2,
+      height: widget.radius * 2,
+      child: CustomPaint(
+        painter: Arc(
+          alreadyWatch: widget.indexOfSeenStatus,
+          numberOfArc: widget.numberOfStatus,
+          spacing: widget.spacing,
+          strokeWidth: widget.strokeWidth,
+          seenProperties: widget.seenProperties,
+          unseenProperties: widget.unseenProperties,
         ),
-        if (widget.child != null)
-          SizedBox(
-            width: (widget.radius * 2) - widget.padding,
-            height: widget.radius * 2 - widget.padding,
-            child: widget.child!,
-          ),
-      ],
+        child: widget.child != null
+            ? SizedBox(
+                width: (widget.radius * 2) - widget.padding,
+                height: widget.radius * 2 - widget.padding,
+                child: widget.child!,
+              )
+            : null,
+      ),
     );
   }
 }
