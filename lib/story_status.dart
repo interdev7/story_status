@@ -1,32 +1,35 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 library story_status;
 
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-// Abstract classes for unseen and seen properties
-abstract class SeenProperties {}
+// Abstract classes for seen and unseen properties
+class SeenProperties {
+  final Color? color;
+  final Gradient? gradient;
 
-abstract class UnseenProperties {}
-
-// Classes for color and gradient properties
-class SeenColor extends SeenProperties {
-  final Color color;
-  SeenColor({required this.color});
+  SeenProperties({
+    this.color,
+    this.gradient,
+  }) : assert(
+          ((color == null && gradient != null) || (color != null && gradient == null)),
+          "Either color or gradient must be provided, but not both.",
+        );
 }
 
-class SeenGradient extends SeenProperties {
-  final Gradient gradient;
-  SeenGradient({required this.gradient});
-}
+class UnseenProperties {
+  final Color? color;
+  final Gradient? gradient;
 
-class UnseenColor extends UnseenProperties {
-  final Color color;
-  UnseenColor({required this.color});
-}
-
-class UnseenGradient extends UnseenProperties {
-  final Gradient gradient;
-  UnseenGradient({required this.gradient});
+  UnseenProperties({
+    this.color,
+    this.gradient,
+  }) : assert(
+          ((color == null && gradient != null) || (color != null && gradient == null)),
+          "Either color or gradient must be provided, but not both.",
+        );
 }
 
 class StoryStatus extends StatefulWidget {
@@ -128,12 +131,12 @@ class Arc extends CustomPainter {
     for (var i = 0; i < number; i++) {
       Paint paint = alreadyWatch - 1 >= i ? seenPaint : unSeenPaint;
 
-      if (alreadyWatch - 1 >= i && seenProperties is SeenGradient) {
-        paint.shader = (seenProperties as SeenGradient).gradient.createShader(
-              Rect.fromCircle(center: center, radius: radius),
-            );
-      } else if (alreadyWatch - 1 < i && unseenProperties is UnseenGradient) {
-        paint.shader = (unseenProperties as UnseenGradient).gradient.createShader(Rect.fromCircle(center: center, radius: radius));
+      if (alreadyWatch - 1 >= i && seenProperties.gradient != null) {
+        paint.shader = seenProperties.gradient?.createShader(
+          Rect.fromCircle(center: center, radius: radius),
+        );
+      } else if (alreadyWatch - 1 < i && unseenProperties.gradient != null) {
+        paint.shader = unseenProperties.gradient?.createShader(Rect.fromCircle(center: center, radius: radius));
       }
 
       canvas.drawArc(
@@ -158,10 +161,10 @@ class Arc extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
 
-    if (seenProperties is SeenColor) {
-      seenPaint.color = (seenProperties as SeenColor).color;
-    } else if (seenProperties is SeenGradient) {
-      seenPaint.shader = (seenProperties as SeenGradient).gradient.createShader(Rect.fromCircle(center: center, radius: radius));
+    if (seenProperties.color != null) {
+      seenPaint.color = seenProperties.color!;
+    } else if (seenProperties.gradient != null) {
+      seenPaint.shader = seenProperties.gradient?.createShader(Rect.fromCircle(center: center, radius: radius));
     }
 
     Paint unSeenPaint = Paint()
@@ -169,10 +172,10 @@ class Arc extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke;
 
-    if (unseenProperties is UnseenColor) {
-      unSeenPaint.color = (unseenProperties as UnseenColor).color;
-    } else if (unseenProperties is UnseenGradient) {
-      unSeenPaint.shader = (unseenProperties as UnseenGradient).gradient.createShader(Rect.fromCircle(center: center, radius: radius));
+    if (unseenProperties.color != null) {
+      unSeenPaint.color = unseenProperties.color!;
+    } else if (unseenProperties.gradient != null) {
+      unSeenPaint.shader = unseenProperties.gradient?.createShader(Rect.fromCircle(center: center, radius: radius));
     }
 
     drawArcWithRadius(
