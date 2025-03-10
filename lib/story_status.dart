@@ -1,11 +1,10 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 library story_status;
 
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-// Abstract classes for seen and unseen properties
+// Classes for seen and unseen properties
 class SeenProperties {
   final Color? color;
   final Gradient? gradient;
@@ -34,7 +33,7 @@ class UnseenProperties {
 
 class StoryStatus extends StatefulWidget {
   final int numberOfStatus;
-  final int indexOfSeenStatus;
+  final int countOfSeenStatus;
   final double spacing;
   final double radius;
   final double padding;
@@ -47,7 +46,7 @@ class StoryStatus extends StatefulWidget {
   const StoryStatus({
     super.key,
     this.numberOfStatus = 10,
-    this.indexOfSeenStatus = 0,
+    this.countOfSeenStatus = 0,
     this.spacing = 10.0,
     this.radius = 50,
     this.padding = 5,
@@ -70,7 +69,7 @@ class _StoryStatusState extends State<StoryStatus> {
       height: widget.radius * 2,
       child: CustomPaint(
         painter: Arc(
-          alreadyWatch: widget.indexOfSeenStatus,
+          alreadyWatch: widget.countOfSeenStatus,
           numberOfArc: widget.numberOfStatus,
           spacing: widget.spacing,
           strokeWidth: widget.strokeWidth,
@@ -122,19 +121,12 @@ class Arc extends CustomPainter {
     Size size,
   ) {
     for (var i = 0; i < number; i++) {
-      Paint paint = alreadyWatch - 1 >= i ? seenPaint : unSeenPaint;
+      Paint paint = i < alreadyWatch ? seenPaint : unSeenPaint;
 
-      if (alreadyWatch - 1 >= i && seenProperties.gradient != null) {
-        paint.shader = seenProperties.gradient?.createShader(
-          Rect.fromCircle(center: center, radius: radius),
-        );
-      } else if (alreadyWatch - 1 < i && unseenProperties.gradient != null) {
-        paint.shader = unseenProperties.gradient?.createShader(Rect.fromCircle(center: center, radius: radius));
-      }
-
+      double currentAngle = start + i * (angle + spacing);
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
-        doubleToAngle((start + ((angle + spacing) * i))),
+        doubleToAngle(currentAngle),
         doubleToAngle(angle),
         false,
         paint,
@@ -147,7 +139,7 @@ class Arc extends CustomPainter {
     final Offset center = Offset(size.width / 2.0, size.height / 2.0);
     final double radius = size.width / 2.0;
     double angle = numberOfArc == 1 ? 360.0 : (360.0 / numberOfArc - spacing);
-    var startingAngle = numberOfArc == 4 ? 5.0 : 270.0;
+    var startingAngle = (numberOfArc == 1) ? 270.0 : -90.0 + (spacing / 2);
 
     Paint seenPaint = Paint()
       ..strokeCap = StrokeCap.round
